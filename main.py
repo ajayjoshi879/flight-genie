@@ -32,8 +32,7 @@ if __name__ == '__main__':
                 indexes[names[i]][rr] = index
                 index += 1
 
-
-    flights_array = [flight_to_array(f, indexes, names) for f in  flights]
+    flights_array = [flight_to_array(f, indexes, names) for f in flights]
 
     our_array = numpy.array(flights_array)
 
