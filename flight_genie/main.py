@@ -2,15 +2,17 @@ from scipy import spatial
 import numpy
 
 from flight_genie.flight import Flight
-from flight_genie.utils import get_names_values_from_csv
+from flight_genie.utils import (
+    get_names_values_from_csv,
+    get_pairs_list_from_names_values
+)
 
 
 def main(csv_file):
     """Run the app passing in a file"""
-    csv_file = 'flights-data.csv'
-
     names, values = get_names_values_from_csv(csv_file)
-
+    pairs_list = get_pairs_list_from_names_values(names, values)
+    print(list(Flight(pairs_list[0]).to_numerical_list()))
     #
     # indexes = {}
     #

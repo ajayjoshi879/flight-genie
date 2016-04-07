@@ -1,21 +1,21 @@
 """All single flight related functionalities and representations"""
 
+from flight_genie.utils import get_numerical_value
+
 
 class Flight(object):
     """Simple representation of a flight. Just containing properties"""
 
-    def __init__(self, **params):
-        """Sets the flight properties from a dict
+    def __init__(self, pairs_list):
+        """Sets the flight properties from a list of pairs"""
+        self.__pairs_list = pairs_list
 
-        For now it just does __setattr__ for all.
-        """
-        for name, val in params.iteritems():
-            self.__setattr__(name, val)
+    def get_attribute(self, attribute_name):
+        """Gets the value of a atributed labels attribute_name"""
+        pair = filter(lambda x: x[0] == attribute_name, self.__pairs_list)
+        return pair[1]
 
-    def to_array(self):
+    def to_numerical_list(self):
         """Return an array of values by a certain order."""
-        return [val for name, val in enumerate(self.__dict__)]
-
-    def to_array_without_price(self):
-        """Return an array of values missing the price"""
-        return Flight.to_array()
+        return map(get_numerical_value,
+                   [v[1] for v in self.__pairs_list])

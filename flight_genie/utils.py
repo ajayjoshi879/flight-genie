@@ -12,15 +12,35 @@ def get_names_values_from_csv(csv_path):
         values = rows[1:]
     return names, values
 
-def get_dicts_from_names_values(names, values):
-    """Return a list of dicts from list of keys and list of lists of params
 
-    TODO: Change to ordered dict.
+def get_pairs_list_from_names_values(names, values):
+    """Return a list of pairs from list of keys and list of lists of params
+
     e.g. names = ['a', 'b', 'c']
-    values = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-    return: [{'a': 1, 'b': 2, 'c': 3},
-             {'a': 4, 'b': 5, 'c': 6},
-             {'a': 7, 'b': 8, 'c': 9}]
+    values =
+    return: [('a', 1), ('b', 2), ('c', 3),
+             ('a', 4), ('b', 5), ('c', 6),
+             ('a', 7), ('b', 8), ('c', 9)]
     """
-    keys_values_pairs = [zip(names, v) for v in values]
-    return [{f[0]: f[1] for f in v} for v in keys_values_pairs]
+    zipped_values = [zip(names, v) for v in values]
+    return [list(v) for v in zipped_values]
+
+
+def get_numerical_value(value):
+    """Return a numerical value for value.
+
+    If the passed value is a number return it.
+    Otherwise return a hash over the value.
+    """
+    if is_number(value):
+        return float(value)
+    return hash(value)
+
+
+def is_number(value):
+    """Return if the passed value can be parsed to float."""
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
