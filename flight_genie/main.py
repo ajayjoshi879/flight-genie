@@ -1,4 +1,5 @@
 from scipy import spatial
+from sklearn.neighbors import NearestNeighbors
 import numpy
 
 from flight_genie.flight import Flight
@@ -8,61 +9,23 @@ from flight_genie.utils import (
 )
 
 
+PRICE_USD = 'priceusd'
+
+
 def main(csv_file):
     """Run the app passing in a file"""
     names, values = get_names_values_from_csv(csv_file)
     pairs_list = get_pairs_list_from_names_values(names, values)
-    print(list(Flight(pairs_list[0]).to_numerical_list()))
-    #
-    # indexes = {}
-    #
-    # for i, r in enumerate(zip(*flights)):
-    #     if type(r[0]) != int:
-    #         index = 0
-    #         for rr in r:
-    #             if names[i] not in indexes:
-    #                 indexes[names[i]] = {}
-    #             indexes[names[i]][rr] = index
-    #             index += 1
-    #
-    # flights_array = [flight_to_array(f, indexes, names) for f in flights]
-    #
-    # our_array = numpy.array(flights_array)
-    #
-    # our_tree = spatial.cKDTree(our_array)
-    #
-    # item = [
-    #     '2016-03-69',
-    #     '9',
-    #     '4',
-    #     '2016-03-80',
-    #     '20',
-    #     '1  ',
-    #     '2016-03-73',
-    #     '',
-    #     '7  ',
-    #     'ABQ',
-    #     'ABE',
-    #     'US',
-    #     'GSP',
-    #     'GSP',
-    #     'US',
-    #     'AA',
-    #     'B',
-    #     '1',
-    #     '0',
-    #     '1',
-    #     '11',
-    #     '2',
-    #     'USD',
-    #     '370.0367302',
-    #     '581.6999999',
-    #     'economy',
-    #     'website',
-    #     '0',
-    #     'O Fallon',
-    #     'US',
-    #     'NM',
-    # ]
-    # ar = flight_to_array(item, indexes, names)
-    # print our_tree.query(ar, k=1, distance_upper_bound=10)
+    flights = [Flight(p) for p in pairs_list]
+    flights_dataset = [f.to_numerical_list(excluded_attributes=[PRICE_USD])
+                       for f in flights]
+    neigh = NearestNeighbors(1)
+    neigh.fit(list(flights_dataset))
+    predicted_id = neigh.kneighbors([flights_dataset[12391]], 1,
+                                    return_distance=False)[0][0]
+    predicted_flight_list = flights_dataset[predicted_id]
+    predicted_flight = filter(
+        lambda f: f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
+        flights
+    )
+    print(next(predicted_flight).get_attribute(PRICE_USD))
