@@ -5,11 +5,11 @@ from flight_genie.flight import Flight
 from flight_genie.utils import get_names_values_from_csv
 
 
-if __name__ == '__main__':
+def main(csv_file):
+    """Run the app passing in a file"""
+    csv_file = 'flights-data.csv'
 
-    CSV_FILE = 'flights-data.csv'
-
-    names, values = get_names_values_from_csv(CSV_FILE)
+    names, values = get_names_values_from_csv(csv_file)
 
     #
     # indexes = {}
