@@ -1,6 +1,4 @@
-from scipy import spatial
 from sklearn.neighbors import NearestNeighbors
-import numpy
 
 from flight_genie.flight import Flight
 from flight_genie.utils import (
