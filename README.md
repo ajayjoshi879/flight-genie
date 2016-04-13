@@ -53,8 +53,5 @@ Indented things can be inferred.
  - priceusd
  - platform
  - isota
-  - usercity
-  - usercountry
-  - userregion
  - pk_exitid
  - origdestcitycode

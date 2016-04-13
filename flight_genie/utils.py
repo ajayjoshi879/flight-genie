@@ -44,3 +44,30 @@ def is_number(value):
         return True
     except ValueError:
         return False
+
+
+def get_value_by_key_in_pairs_list(pairs_list, key):
+    """e.g. [('a': 4), ('b': 3)], 'b' -> 3"""
+    for pair in pairs_list:
+        if pair[0] == key:
+            return pair[1]
+
+
+def month_day_from_date(date):
+    pass
+
+
+def weekday_from_date(date):
+    pass
+
+
+def city_code_from_airport(airport):
+    pass
+
+
+def country_from_airport(airport):
+    pass
+
+
+def days_in_range(startdate, enddate):
+    pass
