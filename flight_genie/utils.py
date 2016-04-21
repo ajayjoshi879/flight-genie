@@ -1,6 +1,8 @@
 """Common utils for the project"""
 
 import csv
+from datetime import datetime
+
 
 
 def get_names_values_from_csv(csv_path):
@@ -54,15 +56,17 @@ def get_value_by_key_in_pairs_list(pairs_list, key):
 
 
 def month_day_from_date(date):
-    pass
+    dt = datetime_from_csv_col(date)
+    return str(dt.month)
 
 
 def weekday_from_date(date):
-    pass
+    dt = datetime_from_csv_col(date)
+    return str(dt.weekday)
 
 
 def city_code_from_airport(airport):
-    pass
+    return str(dt.month)
 
 
 def country_from_airport(airport):
@@ -70,4 +74,13 @@ def country_from_airport(airport):
 
 
 def days_in_range(startdate, enddate):
-    pass
+    timedel
+
+
+def datetime_from_csv_col(col):
+    """Return datetime from passed csv col in format  MM/DD/YY """
+    date_fields = col.split('/')
+    month = int(date_fields[0])
+    day = int(date_fields[1])
+    year = int("20" + date_fields[2])
+    return datetime(year, month, day)
