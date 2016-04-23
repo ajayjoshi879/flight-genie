@@ -50,5 +50,5 @@ def main(training_csv, testing_csv):
             lambda f: f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
             flights
         )
-        print(testing_flights[i], end=' ')
+        print(testing_flights[i], end=' $')
         print(next(predicted_flight).get_attribute(PRICE_USD))
