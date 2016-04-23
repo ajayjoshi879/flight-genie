@@ -115,24 +115,29 @@ def get_value_by_key_in_pairs_list(pairs_list, key):
 
 
 def month_day_from_date(date):
+    """Get the day of month from a date in the csv"""
     dt = datetime_from_csv_col(date)
     return str(dt.month)
 
 
 def weekday_from_date(date):
+    """Get the weekday (number from 1 to 7) from a date in the csv"""
     dt = datetime_from_csv_col(date)
     return str(dt.weekday)
 
 
 def city_code_from_airport(airport):
+    """Get the city code of airport code"""
     return AIRPORTS[airport]['city_code']
 
 
 def country_from_airport(airport):
+    """Get the country code from airport code"""
     return AIRPORTS[airport]['country']
 
 
 def days_in_range(start_date, end_date):
+    """Get the number of days between two columns in the csv"""
     start_datetime = datetime_from_csv_col(start_date)
     end_datetime = datetime_from_csv_col(end_date)
     delta = end_datetime - start_datetime
