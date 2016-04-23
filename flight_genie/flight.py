@@ -15,32 +15,29 @@ class Flight(object):
     """Simple representation of a flight. Just containing properties"""
 
     PARAMETERS = (
-        'date'
-        'dayofmonth'
-        'weekday'
-        'outbounddate'
-        'outbounddayofmonth'
-        'outboundweekday'
-        'inbounddate'
-        'inbounddayofmonth'
-        'inboundweekday'
-        'originairport'
-        'origincitycode'
-        'origincountry'
-        'destinationairport'
-        'destinationcitycode'
-        'destinationcountry'
-        'carriercode'
-        'carriertype'
-        'adults'
-        'children'
-        'daystodeparture'
-        'dayslengthofstay'
-        'priceusd'
-        'platform'
+        'date',
+        'dayofmonth',
+        'weekday',
+        'outbounddate',
+        'outbounddayofmonth',
+        'outboundweekday',
+        'inbounddate',
+        'inbounddayofmonth',
+        'inboundweekday',
+        'originairport',
+        'origincitycode',
+        'origincountry',
+        'destinationairport',
+        'destinationcitycode',
+        'destinationcountry',
+        'carriercode',
+        'carriertype',
+        'adults',
+        'children',
+        'daystodeparture',
+        'dayslengthofstay',
+        'platform',
         'isota'
-        'pk_exitid'
-        'origdestcitycode'
     )
 
     def __init__(self, pairs_list):
@@ -57,11 +54,14 @@ class Flight(object):
         current_parameters = [p[0] for p in pairs_list]
         for param in cls.PARAMETERS:
             if param in current_parameters:
-                val = get_value_by_key_in_pairs_list(pairs_list, param)
+                param_val = get_value_by_key_in_pairs_list(pairs_list, param)
             else:
                 inferring_dict = cls.INFERRING_FUNCTIONS[param]
-                val = apply(inferring_dict['function'], inferring_dict['core'])
-            full_pairs_list.append((param, val))
+                core_vals = (get_value_by_key_in_pairs_list(pairs_list, c)
+                             for c in inferring_dict['core'])
+                param_val = inferring_dict['function'](*[v for v in core_vals])
+            full_pairs_list.append((param, param_val))
+        return cls(full_pairs_list)
 
     def get_attribute(self, attr_name):
         """Gets the value of a atributed labels attr_name"""
@@ -73,45 +73,51 @@ class Flight(object):
                         [v[1] for v in self.__pairs_list
                          if v[0] not in excluded_attributes]))
 
+    def __str__(self):
+        """A good representation as a string"""
+        return 'FROM: {}, TO: {}, ON: {}'.format(self.get_attribute('originairport'),
+                                                 self.get_attribute('destinationairport'),
+                                                 self.get_attribute('outbounddate'))
+
     INFERRING_FUNCTIONS = {
         'dayofmonth': {
-            'core': 'date',
+            'core': ['date'],
             'function': month_day_from_date
         },
         'weekday': {
-            'core': 'date',
+            'core': ['date'],
             'function': weekday_from_date
         },
         'outbounddayofmonth': {
-            'core': 'outbounddate',
+            'core': ['outbounddate'],
             'function': month_day_from_date
         },
         'outboundweekday': {
-            'core': 'outbounddate',
+            'core': ['outbounddate'],
             'function': weekday_from_date
         },
         'inbounddayofmonth': {
-            'core': 'inbounddate',
+            'core': ['inbounddate'],
             'function': month_day_from_date
         },
         'inboundweekday': {
-            'core': 'inbounddate',
+            'core': ['inbounddate'],
             'function': weekday_from_date
         },
         'origincitycode': {
-            'core': 'originairport',
+            'core': ['originairport'],
             'function': city_code_from_airport
         },
         'origincountry': {
-            'core': 'originairport',
+            'core': ['originairport'],
             'function': country_from_airport
         },
         'destinationcitycode': {
-            'core': 'destinationairport',
+            'core': ['destinationairport'],
             'function': city_code_from_airport
         },
         'destinationcountry': {
-            'core': 'destinationairport',
+            'core': ['destinationairport'],
             'function': country_from_airport
         },
         'daystodeparture': {

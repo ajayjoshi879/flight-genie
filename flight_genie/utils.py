@@ -2,6 +2,7 @@
 
 import csv
 from datetime import datetime
+from functools import wraps
 
 
 AIRPORTS = {
@@ -13,9 +14,29 @@ AIRPORTS = {
         'city_code': 'FRA',
         'country': 'DE'
     },
+    'BUR': {
+        'city_code': 'BUR',
+        'country': 'US'
+    },
+    'CPT': {
+        'city_code': 'CPT',
+        'country': 'ZA'
+    },
     'CGN': {
         'city_code': 'CGN',
         'country': 'DE'
+    },
+    'CHQ': {
+        'city_code': 'HER',
+        'country': 'GR'
+    },
+    'CUN': {
+        'city_code': 'CUN',
+        'country': 'MX'
+    },
+    'DMK': {
+        'city_code': 'BKK',
+        'country': 'TH'
     },
     'DUS': {
         'city_code': 'DUS',
@@ -33,9 +54,33 @@ AIRPORTS = {
         'city_code': 'HAM',
         'country': 'DE'
     },
+    'HAV': {
+        'city_code': 'HAV',
+        'country': 'CU'
+    },
+    'HER': {
+        'city_code': 'HER',
+        'country': 'GR'
+    },
     'HHN': {
         'city_code': 'FRA',
         'country': 'DE'
+    },
+    'HKT': {
+        'city_code': 'HKT',
+        'country': 'TH'
+    },
+    'LAS': {
+        'city_code': 'LAS',
+        'country': 'US'
+    },
+    'LIS': {
+        'city_code': 'BKK',
+        'country': 'TH'
+    },
+    'LPA': {
+        'city_code': 'LPA',
+        'country': 'ES'
     },
     'MAD': {
         'city_code': 'MAD',
@@ -44,6 +89,10 @@ AIRPORTS = {
     'MAN': {
         'city_code': 'MAN',
         'country': 'UK'
+    },
+    'MRU': {
+        'city_code': 'MRU',
+        'country': 'MU'
     },
     'MUC': {
         'city_code': 'MUC',
@@ -57,9 +106,25 @@ AIRPORTS = {
         'city_code': 'OAK',
         'country': 'US'
     },
+    'PMI': {
+        'city_code': 'PMI',
+        'country': 'ES'
+    },
+    'SJO': {
+        'city_code': 'SJO',
+        'country': 'CR'
+    },
     'STR': {
         'city_code': 'STR',
         'country': 'DE'
+    },
+    'SYQ': {
+        'city_code': 'SJO',
+        'country': 'CR'
+    },
+    'WDH': {
+        'city_code': 'WDH',
+        'country': 'NA'
     }
 }
 
@@ -112,30 +177,50 @@ def get_value_by_key_in_pairs_list(pairs_list, key):
     for pair in pairs_list:
         if pair[0] == key:
             return pair[1]
+    raise ValueError('Attribute not found: {}'.format(key))
 
 
+def empty_string_on_empty_input(func):
+    """Decorator to return '' on empty string input
+
+    Used for columns where data might be missing
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        for arg in args:
+            if arg.strip() == '':
+                return ''
+        return func(*args, **kwargs)
+    return wrapper
+
+
+@empty_string_on_empty_input
 def month_day_from_date(date):
     """Get the day of month from a date in the csv"""
     dt = datetime_from_csv_col(date)
     return str(dt.month)
 
 
+@empty_string_on_empty_input
 def weekday_from_date(date):
     """Get the weekday (number from 1 to 7) from a date in the csv"""
     dt = datetime_from_csv_col(date)
-    return str(dt.weekday)
+    return str(dt.weekday())
 
 
+@empty_string_on_empty_input
 def city_code_from_airport(airport):
     """Get the city code of airport code"""
     return AIRPORTS[airport]['city_code']
 
 
+@empty_string_on_empty_input
 def country_from_airport(airport):
     """Get the country code from airport code"""
     return AIRPORTS[airport]['country']
 
 
+@empty_string_on_empty_input
 def days_in_range(start_date, end_date):
     """Get the number of days between two columns in the csv"""
     start_datetime = datetime_from_csv_col(start_date)
