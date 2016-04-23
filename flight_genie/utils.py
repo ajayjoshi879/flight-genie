@@ -4,6 +4,65 @@ import csv
 from datetime import datetime
 
 
+AIRPORTS = {
+    'AMS': {
+        'city_code': 'NL',
+        'country': 'BKK'
+    },
+    'BKK': {
+        'city_code': 'FRA',
+        'country': 'DE'
+    },
+    'CGN': {
+        'city_code': 'CGN',
+        'country': 'DE'
+    },
+    'DUS': {
+        'city_code': 'DUS',
+        'country': 'DE'
+    },
+    'FRA': {
+        'city_code': 'FRA',
+        'country': 'DE'
+    },
+    'HAJ': {
+        'city_code': 'HAJ',
+        'country': 'DE'
+    },
+    'HAM': {
+        'city_code': 'HAM',
+        'country': 'DE'
+    },
+    'HHN': {
+        'city_code': 'FRA',
+        'country': 'DE'
+    },
+    'MAD': {
+        'city_code': 'MAD',
+        'country': 'ES'
+    },
+    'MAN': {
+        'city_code': 'MAN',
+        'country': 'UK'
+    },
+    'MUC': {
+        'city_code': 'MUC',
+        'country': 'DE'
+    },
+    'NRN': {
+        'city_code': 'DUS',
+        'country': 'DE'
+    },
+    'OAK': {
+        'city_code': 'OAK',
+        'country': 'US'
+    },
+    'STR': {
+        'city_code': 'STR',
+        'country': 'DE'
+    }
+}
+
 
 def get_names_values_from_csv(csv_path):
     """Return a tuple of two elements - names and values of csv"""
@@ -66,15 +125,18 @@ def weekday_from_date(date):
 
 
 def city_code_from_airport(airport):
-    return str(dt.month)
+    return AIRPORTS[airport]['city_code']
 
 
 def country_from_airport(airport):
-    pass
+    return AIRPORTS[airport]['country']
 
 
-def days_in_range(startdate, enddate):
-    timedel
+def days_in_range(start_date, end_date):
+    start_datetime = datetime_from_csv_col(start_date)
+    end_datetime = datetime_from_csv_col(end_date)
+    delta = end_datetime - start_datetime
+    return str(delta.days)
 
 
 def datetime_from_csv_col(col):
