@@ -15,7 +15,7 @@ python flight_genie/main.py
 Then every time before working activate virtual env
 ```sh
 source env/bin/activate
-invoke run <csv_file.csv>
+invoke run <training_csv_file.csv> <testing_csv_file.csv>
 ```
 
 

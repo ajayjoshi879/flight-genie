@@ -37,6 +37,7 @@ class Flight(object):
         'daystodeparture',
         'dayslengthofstay',
         'platform',
+        'priceusd',
         'isota'
     )
 

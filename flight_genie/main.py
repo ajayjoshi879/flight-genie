@@ -39,7 +39,7 @@ def main(training_csv, testing_csv):
 
     testing_flights = get_flights_list_from_csv(testing_csv,
                                                 Flight.get_from_core_data)
-    testing_flights_dataset = [f.to_numerical_list()
+    testing_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                for f in testing_flights]
     for i, flight in enumerate(testing_flights_dataset):
         predicted_id = neigh_tree.kneighbors([flight],
@@ -50,5 +50,9 @@ def main(training_csv, testing_csv):
             lambda f: f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
             flights
         )
-        print(testing_flights[i], end=' $')
-        print(next(predicted_flight).get_attribute(PRICE_USD))
+        predicted_price = next(predicted_flight).get_attribute(PRICE_USD)
+        real_price = testing_flights[i].get_attribute(PRICE_USD)
+
+        print(testing_flights[i], end=' ')
+        print('Predicted: {} '.format(predicted_price), end=' ')
+        print('Real: {}'.format(real_price))
