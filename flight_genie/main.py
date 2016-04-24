@@ -54,5 +54,5 @@ def main(training_csv, testing_csv):
         real_price = testing_flights[i].get_attribute(PRICE_USD)
 
         print(testing_flights[i], end=' ')
-        print('Predicted: {} '.format(predicted_price), end=' ')
-        print('Real: {}'.format(real_price))
+        print('Predicted: ${} '.format(predicted_price), end=' ')
+        print('Real: ${}'.format(real_price))
