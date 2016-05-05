@@ -18,6 +18,10 @@ AIRPORTS = {
         'city_code': 'BUR',
         'country': 'US'
     },
+    'CNX': {
+        'city_code': 'BKK',
+        'country': 'TH'
+    },
     'CPT': {
         'city_code': 'CPT',
         'country': 'ZA'
@@ -143,7 +147,7 @@ def get_pairs_list_from_names_values(names, values):
     """Return a list of pairs from list of keys and list of lists of params
 
     e.g. names = ['a', 'b', 'c']
-    values =
+    values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     return: [('a', 1), ('b', 2), ('c', 3),
              ('a', 4), ('b', 5), ('c', 6),
              ('a', 7), ('b', 8), ('c', 9)]

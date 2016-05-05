@@ -31,11 +31,11 @@ def get_KD_tree(flights_dataset):
 
 def main(training_csv, testing_csv):
     """Run the app passing in a training and testing file"""
-    flights = get_flights_list_from_csv(training_csv,
-                                        Flight)
-    flights_dataset = [f.to_numerical_list([PRICE_USD])
-                       for f in flights]
-    neigh_tree = get_KD_tree(flights_dataset)
+    trainging_flights = get_flights_list_from_csv(training_csv,
+                                                  Flight)
+    training_flights_dataset = [f.to_numerical_list([PRICE_USD])
+                                for f in trainging_flights]
+    neigh_tree = get_KD_tree(training_flights_dataset)
 
     testing_flights = get_flights_list_from_csv(testing_csv,
                                                 Flight.get_from_core_data)
@@ -45,10 +45,10 @@ def main(training_csv, testing_csv):
         predicted_id = neigh_tree.kneighbors([flight],
                                              1,
                                              return_distance=False)[0][0]
-        predicted_flight_list = flights_dataset[predicted_id]
+        predicted_flight_list = training_flights_dataset[predicted_id]
         predicted_flight = filter(
             lambda f: f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
-            flights
+            trainging_flights
         )
         predicted_price = next(predicted_flight).get_attribute(PRICE_USD)
         real_price = testing_flights[i].get_attribute(PRICE_USD)
