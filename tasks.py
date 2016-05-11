@@ -9,8 +9,8 @@ from flight_genie.main import (
 
 @task(help={'method': "Name of the person to say hi to.",
             'training_csv': "Training csv values"})
-def run(training_csv='training_data.csv',
-        testing_csv='test_data.csv',
+def run(training_csv='training_data_reworked_prices.csv',
+        testing_csv='test_data_reworked_prices.csv',
         nearest_neighbour=False,
         linear_regression=False,
         random_forrest=False,
@@ -18,10 +18,10 @@ def run(training_csv='training_data.csv',
     """Run the app by providing csv files with flights"""
     main(training_csv, testing_csv)
     if nearest_neighbour:
-        pass
+        raise NotImplemented()
     elif linear_regression:
-        pass
+        raise NotImplemented()
     elif random_forrest:
-        pass
+        raise NotImplemented()
     elif time_series:
-        pass
+        raise NotImplemented()

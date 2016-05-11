@@ -240,3 +240,7 @@ def datetime_from_csv_col(col):
     day = int(date_fields[1])
     year = int("20" + date_fields[2])
     return datetime(year, month, day)
+
+
+def get_relative_error(approximation, real):
+    return abs(approximation - real) / real
