@@ -76,9 +76,11 @@ class Flight(object):
 
     def __str__(self):
         """A good representation as a string"""
-        return 'FROM: {}, TO: {}, ON: {}'.format(self.get_attribute('originairport'),
-                                                 self.get_attribute('destinationairport'),
-                                                 self.get_attribute('outbounddate'))
+        return 'FROM: {}, TO: {}, ON: {}'.format(
+                    self.get_attribute('originairport'),
+                    self.get_attribute('destinationairport'),
+                    self.get_attribute('outbounddate')
+                )
 
     INFERRING_FUNCTIONS = {
         'dayofmonth': {

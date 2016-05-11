@@ -1,5 +1,5 @@
 from sklearn.neighbors import NearestNeighbors
-
+import matplotlib.pyplot as plt
 from flight_genie.flight import Flight
 from flight_genie.utils import (
     get_names_values_from_csv,
@@ -24,17 +24,17 @@ def get_KD_tree(flights_dataset):
 
     Used mostly with training_csv
     """
-    neigh = NearestNeighbors(1)
+    neigh = NearestNeighbors(1)   # TODO: not kd-tree?
     neigh.fit(list(flights_dataset))
     return neigh
 
 
 def main(training_csv, testing_csv):
     """Run the app passing in a training and testing file"""
-    trainging_flights = get_flights_list_from_csv(training_csv,
-                                                  Flight)
+    training_flights = get_flights_list_from_csv(training_csv,
+                                                 Flight)
     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
-                                for f in trainging_flights]
+                                for f in training_flights]
     neigh_tree = get_KD_tree(training_flights_dataset)
 
     testing_flights = get_flights_list_from_csv(testing_csv,
@@ -47,12 +47,38 @@ def main(training_csv, testing_csv):
                                              return_distance=False)[0][0]
         predicted_flight_list = training_flights_dataset[predicted_id]
         predicted_flight = filter(
-            lambda f: f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
-            trainging_flights
-        )
+            lambda f:
+                f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
+            training_flights  # TODO: не трябва ли да е testing_data
+        )  # TODO:  don't get it. Filter what???
         predicted_price = next(predicted_flight).get_attribute(PRICE_USD)
         real_price = testing_flights[i].get_attribute(PRICE_USD)
 
         print(testing_flights[i], end=' ')
         print('Predicted: ${} '.format(predicted_price), end=' ')
         print('Real: ${}'.format(real_price))
+
+
+def plot_data(flights_csv):
+    raise NotImplemented()
+
+
+def linear_regression():
+    raise NotImplemented()
+
+
+def random_forest():
+    raise NotImplemented()
+
+
+def nearest_neighbour():
+    raise NotImplemented()
+
+
+def time_series():
+    raise NotImplemented()
+
+
+def assess_criteria(true_flight, predicted_flight, error=5):
+    """Return percentage error"""
+    raise NotImplemented()

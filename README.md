@@ -4,7 +4,8 @@ Trying to predict flight prices with NN
 
 ## Installation
 
-```sh
+```
+sh
 # you have to have python 3 installed
 pyenv env
 source env/bin/activate
@@ -13,16 +14,18 @@ python flight_genie/main.py
 ```
 
 Then every time before working activate virtual env
-```sh
+```
+sh
 source env/bin/activate
-invoke run <training_csv_file.csv> <testing_csv_file.csv>
+invoke run -e <training_csv_file.csv> -t <testing_csv_file.csv>
 ```
 
 
 ## Features wanted:
 
  - in-code ability to infer and filter data columns
-
+ - plots
+ - success rate
 
 
 ## User input
@@ -55,3 +58,10 @@ Indented things can be inferred.
  - isota
  - pk_exitid
  - origdestcitycode
+
+
+# Help
+
+```
+invoke -h
+```
