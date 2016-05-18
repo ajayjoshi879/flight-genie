@@ -9,7 +9,7 @@ from flight_genie.utils import (
 
 
 PRICE_USD = 'priceusd'
-BIN_SIZE = 10
+BIN_SIZE = 128
 
 
 def get_flights_list_from_csv(data_csv,
@@ -26,7 +26,7 @@ def get_KD_tree(flights_dataset):
 
     Used mostly with training_csv
     """
-    neigh = NearestNeighbors(1)
+    neigh = NearestNeighbors(1, algorithm='auto', radius=1.0)
     neigh.fit(list(flights_dataset))
     return neigh
 
@@ -50,7 +50,7 @@ def get_prices_dict(flights):
 
 
 def predicted_and_real_flights_prices(training_flights, testing_flights):
-    """Return a generator over pairs of predicted and real prices for flights"""
+    """Return generator over pairs of predicted and real prices for flights"""
     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                 for f in training_flights]
     neigh_tree = get_KD_tree(training_flights_dataset)
@@ -80,6 +80,8 @@ def generate_plots(training_csv, testing_csv):
                                             float(real_price))
         relative_errors.append(relative_error)
     plt.hist(relative_errors, bins=BIN_SIZE)
+    plt.ylabel('Count')
+    plt.xlabel('Relative error')
     plt.show()
 
 
