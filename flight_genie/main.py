@@ -1,4 +1,3 @@
-import itertools
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
 from flight_genie.flight import Flight
@@ -10,6 +9,7 @@ from flight_genie.utils import (
 
 
 PRICE_USD = 'priceusd'
+BIN_SIZE = 10
 
 
 def get_flights_list_from_csv(data_csv,
@@ -40,77 +40,64 @@ def parse_csv(training_csv, testing_csv):
     return training_flights, testing_flights
 
 
+def get_prices_dict(flights):
+    """Return a dict which has a numerical list for key and price for value"""
+    return {
+        '-'.join(f.to_string_list([
+            PRICE_USD
+        ])): f.get_attribute(PRICE_USD) for f in flights
+    }
+
+
 def predicted_and_real_flights_prices(training_flights, testing_flights):
+    """Return a generator over pairs of predicted and real prices for flights"""
     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                 for f in training_flights]
     neigh_tree = get_KD_tree(training_flights_dataset)
     testing_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                for f in testing_flights]
+    prices_dict = get_prices_dict(training_flights)
     for i, flight in enumerate(testing_flights_dataset):
         predicted_id = neigh_tree.kneighbors([flight],
                                              1,
                                              return_distance=False)[0][0]
         predicted_flight_list = training_flights_dataset[predicted_id]
-        predicted_flight = filter(
-            lambda f:
-                f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
-            training_flights
-        )
-        predicted_price = next(predicted_flight).get_attribute(PRICE_USD)
+        flight_key = '-'.join([str(v) for v in predicted_flight_list])
+        predicted_price = prices_dict[flight_key]
         real_price = testing_flights[i].get_attribute(PRICE_USD)
         yield predicted_price, real_price
 
 
-def plot(training_csv, testing_csv):
+def generate_plots(training_csv, testing_csv):
+    """Make all necessary plots from testing and training CSVs"""
     training_flights, testing_flights = parse_csv(training_csv,
                                                   testing_csv)
-    first_100_prices = []
-    first_100_errors = []
+    relative_errors = []
     prices_pair = predicted_and_real_flights_prices(training_flights,
                                                     testing_flights)
-    for i in range(100):
-        predicted_price, real_price = next(prices_pair)
-        first_100_prices.append(float(predicted_price))
+    for predicted_price, real_price in prices_pair:
         relative_error = get_relative_error(float(predicted_price),
                                             float(real_price))
-        first_100_errors.append(relative_error)
-    plt.hist(first_100_errors, bins=100)
+        relative_errors.append(relative_error)
+    plt.hist(relative_errors, bins=BIN_SIZE)
     plt.show()
 
 
 def main(training_csv, testing_csv):
-        plot(training_csv, testing_csv)
+    """Print all predicted, real prices and relative errors"""
+    training_flights, testing_flights = parse_csv(training_csv,
+                                                  testing_csv)
+    prices_pair = predicted_and_real_flights_prices(training_flights,
+                                                    testing_flights)
+    for predicted_price, real_price in prices_pair:
+        relative_error = get_relative_error(float(predicted_price),
+                                            float(real_price))
+        print('pred: {} real: {} - {}%'.format(
+            predicted_price,
+            real_price,
+            relative_error * 100
+        ))
 
-
-# def main(training_csv, testing_csv):
-#     """Run the app passing in a training and testing file"""
-#     training_flights = get_flights_list_from_csv(training_csv,
-#                                                  Flight)
-#     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
-#                                 for f in training_flights]
-#     neigh_tree = get_KD_tree(training_flights_dataset)
-#
-#     testing_flights = get_flights_list_from_csv(testing_csv,
-#                                                 Flight.get_from_core_data)
-#     testing_flights_dataset = [f.to_numerical_list([PRICE_USD])
-#                                for f in testing_flights]
-#     for i, flight in enumerate(testing_flights_dataset):
-#         predicted_id = neigh_tree.kneighbors([flight],
-#                                              1,
-#                                              return_distance=False)[0][0]
-#         predicted_flight_list = training_flights_dataset[predicted_id]
-#         predicted_flight = filter(
-#             lambda f:
-#                 f.to_numerical_list([PRICE_USD]) == predicted_flight_list,
-#             training_flights
-#         )
-#         predicted_price = next(predicted_flight).get_attribute(PRICE_USD)
-#         real_price = testing_flights[i].get_attribute(PRICE_USD)
-#
-#         print(testing_flights[i], end=' ')
-#         print('Predicted: ${} '.format(predicted_price), end=' ')
-#         print('Real: ${}'.format(real_price))
-#
 
 def plot_data():
     raise NotImplemented()
@@ -130,3 +117,7 @@ def nearest_neighbour():
 
 def time_series():
     raise NotImplemented()
+
+
+if __name__ == '__main__':
+    main('training_data_reworked_prices.csv', 'test_data_reworked_prices.csv')

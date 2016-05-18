@@ -1,16 +1,16 @@
-import sys
 from invoke import task
 
 from flight_genie.main import (
     main,
-    plot_data
+    generate_plots
 )
 
-
-@task(help={'method': "Name of the person to say hi to.",
-            'training_csv': "Training csv values"})
-def run(training_csv='training_data_reworked_prices.csv',
-        testing_csv='test_data_reworked_prices.csv',
+@task(help={
+    'training_csv': 'Training csv values',
+    'test_csv': 'Testing csv values'
+})
+def run(training_csv='training_data.csv',
+        testing_csv='test_data.csv',
         nearest_neighbour=False,
         linear_regression=False,
         random_forrest=False,
@@ -25,3 +25,13 @@ def run(training_csv='training_data_reworked_prices.csv',
         raise NotImplemented()
     elif time_series:
         raise NotImplemented()
+
+
+@task(help={
+    'training_csv': 'Training csv values',
+    'test_csv': 'Testing csv values'
+})
+def plot(training_csv='training_data.csv',
+         testing_csv='test_data.csv'):
+    """Task to generate all plots for method introspection"""
+    generate_plots(training_csv, testing_csv)

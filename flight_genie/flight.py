@@ -69,10 +69,14 @@ class Flight(object):
         return get_value_by_key_in_pairs_list(self.__pairs_list, attr_name)
 
     def to_numerical_list(self, excluded_attributes=[]):
-        """Return an array of values by a certain order."""
+        """Return an array of numbers by a certain order."""
         return list(map(get_numerical_value,
                         [v[1] for v in self.__pairs_list
                          if v[0] not in excluded_attributes]))
+
+    def to_string_list(self, excluded_attributes=[]):
+        """Return an array of strings by a certain order."""
+        return [str(v) for v in self.to_numerical_list(excluded_attributes)]
 
     def __str__(self):
         """A good representation as a string"""
