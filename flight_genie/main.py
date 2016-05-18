@@ -4,12 +4,13 @@ from flight_genie.flight import Flight
 from flight_genie.utils import (
     get_names_values_from_csv,
     get_pairs_list_from_names_values,
-    get_relative_error
+    get_relative_error,
+    get_relative_error_success_count
 )
 
 
 PRICE_USD = 'priceusd'
-BIN_SIZE = 128
+BIN_SIZE = 1024
 
 
 def get_flights_list_from_csv(data_csv,
@@ -26,7 +27,12 @@ def get_KD_tree(flights_dataset):
 
     Used mostly with training_csv
     """
-    neigh = NearestNeighbors(1, algorithm='auto', radius=1.0)
+    neigh = NearestNeighbors(1,
+                             algorithm='auto',
+                             radius=1.0,
+                             leaf_size=30,
+                             p=1,
+                             metric='cityblock')
     neigh.fit(list(flights_dataset))
     return neigh
 
@@ -78,10 +84,10 @@ def generate_plots(training_csv, testing_csv):
     for predicted_price, real_price in prices_pair:
         relative_error = get_relative_error(float(predicted_price),
                                             float(real_price))
-        relative_errors.append(relative_error)
+        relative_errors.append(relative_error * 100)
     plt.hist(relative_errors, bins=BIN_SIZE)
     plt.ylabel('Count')
-    plt.xlabel('Relative error')
+    plt.xlabel('Relative error %')
     plt.show()
 
 
@@ -91,14 +97,18 @@ def main(training_csv, testing_csv):
                                                   testing_csv)
     prices_pair = predicted_and_real_flights_prices(training_flights,
                                                     testing_flights)
+    relative_errors = []
     for predicted_price, real_price in prices_pair:
-        relative_error = get_relative_error(float(predicted_price),
-                                            float(real_price))
-        print('pred: {} real: {} - {}%'.format(
-            predicted_price,
-            real_price,
-            relative_error * 100
-        ))
+        relative_errors.append(get_relative_error(float(predicted_price),
+                                                  float(real_price)))
+
+    for i in range(5, 100, 5):
+        success_count = get_relative_error_success_count(relative_errors,
+                                                         i / 100)
+        print('Flights predicted below {}% err - {}'.format(i, success_count),
+              end=' ')
+        percentage_of_all = (success_count / len(relative_errors)) * 100
+        print('This is {}% of all'.format(percentage_of_all))
 
 
 def plot_data():

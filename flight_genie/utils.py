@@ -164,7 +164,23 @@ def get_numerical_value(value):
     """
     if is_number(value):
         return float(value)
+    if is_date(value):
+        return timestamp_from_date(value)
     return hash(value)
+
+
+def is_date(value):
+    """Return if the string value is a date"""
+    try:
+        datetime_from_csv_col(value)
+        return True
+    except:
+        return False
+
+
+def timestamp_from_date(value):
+    """Get timestamp from a string date value"""
+    return datetime_from_csv_col(value).timestamp()
 
 
 def is_number(value):
@@ -243,4 +259,10 @@ def datetime_from_csv_col(col):
 
 
 def get_relative_error(approximation, real):
+    """Return the relative error of two values"""
     return abs(approximation - real) / real
+
+
+def get_relative_error_success_count(relative_errors, threshold=0.05):
+    """Return the count of the errors below a threshold"""
+    return len(list(filter(lambda x: x <= threshold, relative_errors)))
