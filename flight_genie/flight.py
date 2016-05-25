@@ -78,6 +78,10 @@ class Flight(object):
         """Return an array of strings by a certain order."""
         return [str(v) for v in self.to_numerical_list(excluded_attributes)]
 
+    def get_travellers_count(self):
+        return (float(self.get_attribute("adults")) +
+                float(self.get_attribute("children")))
+
     def __str__(self):
         """A good representation as a string"""
         return 'FROM: {}, TO: {}, ON: {}'.format(

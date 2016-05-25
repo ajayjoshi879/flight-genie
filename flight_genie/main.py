@@ -10,7 +10,7 @@ from flight_genie.utils import (
 
 
 PRICE_USD = 'priceusd'
-BIN_SIZE = 1024
+BIN_SIZE = 128
 
 
 def get_flights_list_from_csv(data_csv,
@@ -69,8 +69,11 @@ def predicted_and_real_flights_prices(training_flights, testing_flights):
                                              return_distance=False)[0][0]
         predicted_flight_list = training_flights_dataset[predicted_id]
         flight_key = '-'.join([str(v) for v in predicted_flight_list])
-        predicted_price = prices_dict[flight_key]
-        real_price = testing_flights[i].get_attribute(PRICE_USD)
+        predicted_price = (
+            float(prices_dict[flight_key]) /
+            training_flights[predicted_id].get_travellers_count())
+        real_price = (float(testing_flights[i].get_attribute(PRICE_USD)) /
+                      testing_flights[i].get_travellers_count())
         yield predicted_price, real_price
 
 
