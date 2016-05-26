@@ -13,7 +13,7 @@ from flight_genie.utils import (
 
 PRICE_USD = 'priceusd'
 BIN_SIZE = 128
-K_NEIGHBORS = 10
+K_NEIGHBORS = 2
 
 
 def get_flights_list_from_csv(data_csv,
