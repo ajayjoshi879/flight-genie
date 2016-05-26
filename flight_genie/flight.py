@@ -79,15 +79,22 @@ class Flight(object):
         return [str(v) for v in self.to_numerical_list(excluded_attributes)]
 
     def get_travellers_count(self):
+        """Return the number of adults + children for the purchase"""
         return (float(self.get_attribute("adults")) +
                 float(self.get_attribute("children")))
 
+    def get_price_per_ticket(self):
+        """Get the price for a single ticket in the purchase"""
+        return (float(self.get_attribute('priceusd')) /
+                self.get_travellers_count())
+
     def __str__(self):
         """A good representation as a string"""
-        return 'FROM: {}, TO: {}, ON: {}'.format(
+        return 'FROM: {}, TO: {}, ON: {}, FOR: {}'.format(
                     self.get_attribute('originairport'),
                     self.get_attribute('destinationairport'),
-                    self.get_attribute('outbounddate')
+                    self.get_attribute('outbounddate'),
+                    self.get_price_per_ticket()
                 )
 
     INFERRING_FUNCTIONS = {

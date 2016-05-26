@@ -266,3 +266,17 @@ def get_relative_error(approximation, real):
 def get_relative_error_success_count(relative_errors, threshold=0.05):
     """Return the count of the errors below a threshold"""
     return len(list(filter(lambda x: x <= threshold, relative_errors)))
+
+
+def get_median_of_list(lst):
+    """Return the median element of a sorted list"""
+    ln = len(lst)
+    div_by_2 = int(ln / 2)
+    if ln % 2 == 0:
+        return (lst[div_by_2 - 1] + lst[div_by_2]) / 2
+    return lst[div_by_2]
+
+
+def get_avg_of_list(lst):
+    """Return the average of a list"""
+    return sum(lst) / len(lst)

@@ -5,12 +5,15 @@ from flight_genie.utils import (
     get_names_values_from_csv,
     get_pairs_list_from_names_values,
     get_relative_error,
-    get_relative_error_success_count
+    get_relative_error_success_count,
+    get_median_of_list,
+    get_avg_of_list
 )
 
 
 PRICE_USD = 'priceusd'
 BIN_SIZE = 128
+K_NEIGHBORS = 10
 
 
 def get_flights_list_from_csv(data_csv,
@@ -46,15 +49,6 @@ def parse_csv(training_csv, testing_csv):
     return training_flights, testing_flights
 
 
-def get_prices_dict(flights):
-    """Return a dict which has a numerical list for key and price for value"""
-    return {
-        '-'.join(f.to_string_list([
-            PRICE_USD
-        ])): f.get_attribute(PRICE_USD) for f in flights
-    }
-
-
 def predicted_and_real_flights_prices(training_flights, testing_flights):
     """Return generator over pairs of predicted and real prices for flights"""
     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
@@ -62,18 +56,18 @@ def predicted_and_real_flights_prices(training_flights, testing_flights):
     neigh_tree = get_KD_tree(training_flights_dataset)
     testing_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                for f in testing_flights]
-    prices_dict = get_prices_dict(training_flights)
     for i, flight in enumerate(testing_flights_dataset):
-        predicted_id = neigh_tree.kneighbors([flight],
-                                             1,
-                                             return_distance=False)[0][0]
-        predicted_flight_list = training_flights_dataset[predicted_id]
-        flight_key = '-'.join([str(v) for v in predicted_flight_list])
-        predicted_price = (
-            float(prices_dict[flight_key]) /
-            training_flights[predicted_id].get_travellers_count())
-        real_price = (float(testing_flights[i].get_attribute(PRICE_USD)) /
-                      testing_flights[i].get_travellers_count())
+        predicted_ids = neigh_tree.kneighbors([flight],
+                                              K_NEIGHBORS,
+                                              return_distance=False)[0]
+        predicted_prices = sorted([
+            training_flights[i].get_price_per_ticket()
+            for i in predicted_ids
+        ])
+        # TODO play with K_NEIGHBORS and median vs avg
+        # predicted_price = get_median_of_list(predicted_prices)
+        predicted_price = get_avg_of_list(predicted_prices)
+        real_price = testing_flights[i].get_price_per_ticket()
         yield predicted_price, real_price
 
 
@@ -105,13 +99,17 @@ def main(training_csv, testing_csv):
         relative_errors.append(get_relative_error(float(predicted_price),
                                                   float(real_price)))
 
-    for i in range(5, 100, 5):
+    percentage_of_all = 0
+    current_perc = 5
+    while percentage_of_all < 100:
         success_count = get_relative_error_success_count(relative_errors,
-                                                         i / 100)
-        print('Flights predicted below {}% err - {}'.format(i, success_count),
+                                                         current_perc / 100)
+        print('Flights predicted below {}% err - {}'.format(current_perc,
+                                                            success_count),
               end=' ')
         percentage_of_all = (success_count / len(relative_errors)) * 100
         print('This is {}% of all'.format(percentage_of_all))
+        current_perc += 5
 
 
 def plot_data():
