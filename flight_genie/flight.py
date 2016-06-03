@@ -36,8 +36,8 @@ class Flight(object):
         'children',
         'daystodeparture',
         'dayslengthofstay',
-        'platform',
         'priceusd',
+        'platform',
         'isota'
     )
 
@@ -69,10 +69,10 @@ class Flight(object):
         return get_value_by_key_in_pairs_list(self.__pairs_list, attr_name)
 
     def to_numerical_list(self, excluded_attributes=[]):
-        """Return an array of numbers by a certain order."""
-        return list(map(get_numerical_value,
-                        [v[1] for v in self.__pairs_list
-                         if v[0] not in excluded_attributes]))
+        """Return an array of numbers by a certain order"""
+        return [get_numerical_value(pair[1])
+                for pair in self.__pairs_list if
+                pair[0] not in excluded_attributes]
 
     def to_string_list(self, excluded_attributes=[]):
         """Return an array of strings by a certain order."""
@@ -90,12 +90,10 @@ class Flight(object):
 
     def __str__(self):
         """A good representation as a string"""
-        return 'FROM: {}, TO: {}, ON: {}, FOR: {}'.format(
-                    self.get_attribute('originairport'),
-                    self.get_attribute('destinationairport'),
-                    self.get_attribute('outbounddate'),
-                    self.get_price_per_ticket()
-                )
+        to_append = ''
+        for pair in self.__pairs_list:
+            to_append += '{}: {} '.format(pair[0], pair[1])
+        return to_append
 
     INFERRING_FUNCTIONS = {
         'dayofmonth': {

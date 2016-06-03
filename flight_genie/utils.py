@@ -218,12 +218,12 @@ def empty_string_on_empty_input(func):
 def month_day_from_date(date):
     """Get the day of month from a date in the csv"""
     dt = datetime_from_csv_col(date)
-    return str(dt.month)
+    return str(dt.day)
 
 
 @empty_string_on_empty_input
 def weekday_from_date(date):
-    """Get the weekday (number from 1 to 7) from a date in the csv"""
+    """Get the weekday (number from 0 to 6) from a date in the csv"""
     dt = datetime_from_csv_col(date)
     return str(dt.weekday())
 
@@ -280,3 +280,12 @@ def get_median_of_list(lst):
 def get_avg_of_list(lst):
     """Return the average of a list"""
     return sum(lst) / len(lst)
+
+
+def print_comparable_flights(f1, f2):
+    """Prints flights with attributes next to each other"""
+    p1 = f1._Flight__pairs_list
+    p2 = f2._Flight__pairs_list
+    print('F1 ---- F2')
+    for i in range(len(p1)):
+        print('{}: {} ---- {}'.format(p1[i][0], p1[i][1], p2[i][1]))

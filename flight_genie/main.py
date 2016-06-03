@@ -7,7 +7,9 @@ from flight_genie.utils import (
     get_relative_error,
     get_relative_error_success_count,
     get_median_of_list,
-    get_avg_of_list
+    get_avg_of_list,
+    get_value_by_key_in_pairs_list,
+    print_comparable_flights
 )
 
 
@@ -21,7 +23,14 @@ def get_flights_list_from_csv(data_csv,
     """Get a list of flights from csv file"""
     names, values = get_names_values_from_csv(data_csv)
     pairs_list = get_pairs_list_from_names_values(names, values)
-    flights = [flight_constructor(p) for p in pairs_list]
+    flights = []
+    for p in pairs_list:
+        flight = flight_constructor(p)
+        is_flight_away = float(flight.get_attribute('daystodeparture')) >= 30
+        is_one_way_flight = flight.get_attribute('inbounddate').strip() == ''
+        if is_one_way_flight:
+            continue
+        flights.append(flight)
     return flights
 
 
@@ -68,6 +77,9 @@ def predicted_and_real_flights_prices(training_flights, testing_flights):
         # predicted_price = get_median_of_list(predicted_prices)
         predicted_price = get_avg_of_list(predicted_prices)
         real_price = testing_flights[i].get_price_per_ticket()
+        if get_relative_error(predicted_price, real_price) > 5:
+            print_comparable_flights(training_flights[predicted_ids[0]],
+                                     testing_flights[i])
         yield predicted_price, real_price
 
 
