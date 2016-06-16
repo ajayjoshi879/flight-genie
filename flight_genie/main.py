@@ -1,5 +1,6 @@
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
+import flight_genie.kdtree as kdtree
 from flight_genie.flight import Flight
 from flight_genie.utils import (
     get_names_values_from_csv,
@@ -39,14 +40,8 @@ def get_KD_tree(flights_dataset):
 
     Used mostly with training_csv
     """
-    neigh = NearestNeighbors(1,
-                             algorithm='auto',
-                             radius=1.0,
-                             leaf_size=30,
-                             p=1,
-                             metric='cityblock')
-    neigh.fit(list(flights_dataset))
-    return neigh
+    tree = kdtree.create(flights_dataset)
+    return tree
 
 
 def parse_csv(training_csv, testing_csv):
@@ -58,6 +53,14 @@ def parse_csv(training_csv, testing_csv):
     return training_flights, testing_flights
 
 
+def get_prices_dict(flights):
+    """Return a dict which has a numerical list for key and price for value"""
+    return {
+        '-'.join(f.to_string_list([PRICE_USD])):
+        f.get_price_per_ticket() for f in flights
+    }
+
+
 def predicted_and_real_flights_prices(training_flights, testing_flights):
     """Return generator over pairs of predicted and real prices for flights"""
     training_flights_dataset = [f.to_numerical_list([PRICE_USD])
@@ -65,13 +68,16 @@ def predicted_and_real_flights_prices(training_flights, testing_flights):
     neigh_tree = get_KD_tree(training_flights_dataset)
     testing_flights_dataset = [f.to_numerical_list([PRICE_USD])
                                for f in testing_flights]
+    prices_dict = get_prices_dict(training_flights)
     for i, flight in enumerate(testing_flights_dataset):
-        predicted_ids = neigh_tree.kneighbors([flight],
-                                              K_NEIGHBORS,
-                                              return_distance=False)[0]
+        predicted_flight_lists = neigh_tree.search_knn(flight, k=K_NEIGHBORS)
+        predicted_flight_keys = []
+        for node, _ in predicted_flight_lists:
+            flight_key = '-'.join([str(v) for v in node.data])
+            predicted_flight_keys.append(flight_key)
+
         predicted_prices = sorted([
-            training_flights[i].get_price_per_ticket()
-            for i in predicted_ids
+            prices_dict[key] for key in predicted_flight_keys
         ])
         # TODO play with K_NEIGHBORS and median vs avg
         # predicted_price = get_median_of_list(predicted_prices)
@@ -80,6 +86,7 @@ def predicted_and_real_flights_prices(training_flights, testing_flights):
         if get_relative_error(predicted_price, real_price) > 5:
             print_comparable_flights(training_flights[predicted_ids[0]],
                                      testing_flights[i])
+        import pdb; pdb.set_trace()
         yield predicted_price, real_price
 
 

@@ -58,8 +58,7 @@ class Flight(object):
                 param_val = get_value_by_key_in_pairs_list(pairs_list, param)
             else:
                 inferring_dict = cls.INFERRING_FUNCTIONS[param]
-                core_vals = (get_value_by_key_in_pairs_list(pairs_list, c)
-                             for c in inferring_dict['core'])
+                core_vals = (get_value_by_key_in_pairs_list(pairs_list, c) for c in inferring_dict['core'])
                 param_val = inferring_dict['function'](*[v for v in core_vals])
             full_pairs_list.append((param, param_val))
         return cls(full_pairs_list)
