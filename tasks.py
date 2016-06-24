@@ -5,6 +5,7 @@ from flight_genie.main import (
     generate_plots
 )
 
+
 @task(help={
     'training_csv': 'Training csv values',
     'test_csv': 'Testing csv values'
